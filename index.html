@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="src/NodeNotFoundException.js"></script>
+    <script src="src/ToFewParametersPassedAsArgument.js"></script>
+    <script src="src/Node.js"></script>
+    <script src="src/Graph.js"></script>
+
+    <script src="lib/jquery-1.7.2.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-responsive.css"/>
+
+</head>
+<body>
+<div class="container">
+
+    <form>
+        <input type="text" id="insert" autocomplete="off"/>
+    </form>
+
+    <span id="caption"></span>
+    <ul id="tree"></ul>
+</div>
+
+
+<script>
+    var graph = new Graph();
+    graph.addNode("milk");
+    graph.addNode("milk", "water");
+    graph.addNode("water", "water1");
+    graph.addNode("water", "water2");
+    graph.addNode("water", "water3");
+    graph.addNode("water", "water4");
+    graph.addNode("milk", "sugar");
+    graph.addNode("milk", "coc");
+    graph.addNode("milk", "mcoc");
+
+    $('#insert').typeahead({source:function (query) {
+        var result = [];
+        (function () {
+            try {
+                var search = graph.search(query);
+            } catch (e) {
+                if (e.name === "NodeNotFoundException") {
+                    result = [];
+                    return;
+                }
+            }
+
+            for (var i in search) {
+                result.push(search[i].getName());
+            }
+        })();
+        return result;
+    }
+    })
+    ;
+
+    $("#insert").change(function () {
+        console.log(1);
+        $("#tree").html("");
+        var search = graph.search($("#insert").val());
+        console.log(search)
+        if (search && !(search instanceof Array)) {
+            var childNames = search.getChildNames();
+            if (childNames.length > 0) {
+                $("#caption").html(
+                        "Child of " +
+                                "<span class='label label-success'>" + $("#insert").val() + "</span>" +
+                                " is :"
+                );
+                for (var k in childNames)
+                    $("#tree").append("<li> <span class='label label-warning'>" + childNames[k] + "</span></li>");
+            } else {
+                var parentNodes = search.getParentNames();
+                $("#caption").html(
+                        "Parent of " +
+                                "<span class='label label-warning'>" + $("#insert").val() + "</span>" +
+                                " is : " +
+                                "<span class='label label-success'>" + parentNodes[0] + "</span>"
+                );
+            }
+        } else {
+            $("#tree").append("incorrect parent name");
+        }
+    });
+</script>
+
+</body>
+</html>
