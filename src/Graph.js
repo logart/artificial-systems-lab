@@ -31,6 +31,8 @@ Graph.prototype.addNode = function (parent, name) {
         }
         if (parentNode != null) {
             parentNode.addChild(name);
+        } else {
+            throw NodeNotFoundException()
         }
     }
 };

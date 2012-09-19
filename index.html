@@ -18,8 +18,11 @@
 <div class="container">
 
     <form>
-        <label for="insert">Input node name for search here(for example "milk"):</label><input type="text" id="insert"
-                                                                                               autocomplete="off"/>
+        <label for="child">Input command (add, find):</label>
+        <span id="operation" class="label" style="display: none;"></span>
+        <input type="text" id="child" autocomplete="off"/>
+        <span id="prefix" class="label" style="display: none;">to</span>
+        <input type="text" id="parent" autocomplete="off" style="display: none;"/>
     </form>
 
     <span id="caption"></span>
@@ -31,7 +34,6 @@
     $(document).ready(function () {
         $(window).keydown(function (event) {
             if (event.keyCode == 13) {
-                showChildren();
                 event.preventDefault();
                 return false;
             }
@@ -49,7 +51,7 @@
     graph.addNode("milk", "coc");
     graph.addNode("milk", "mcoc");
 
-    $('#insert').typeahead({source:function (query) {
+    var selectChildNode = function (query) {
         var result = [];
         (function () {
             try {
@@ -65,23 +67,90 @@
                 result.push(search[i].getName());
             }
         })();
+        console.log(result);
         return result;
     }
-    })
-    ;
 
-    var showChildren = function () {
+    $('#child').change(function () {
+        var request = $('#child').val();
+        console.log(request);
+        var search = request.search("&lt;");
+        console.log(search);
+        if (currentCommand == "find") {
+            showChildren(request);
+            $("#operation").hide();
+            $("#child").val("");
+            currentCommand = "";
+            return true;
+        }
+
+        //determine operation type
+        if (request[0] == "a") {
+            $('#operation').html("add");
+            $('#operation').show();
+            $('#parent').show();
+            $('#prefix').show();
+            $('#child').val("");
+            currentCommand = "add";
+        } else if (request[0] == "f") {
+            $('#operation').html("find");
+            $('#operation').show();
+            var request = $('#child').val();
+            $('#child').val("");
+            currentCommand = "find";
+        } else if (request[0] == "r") {
+            $('#operation').html("remove");
+            $('#operation').show();
+            $('#child').val("");
+            currentCommand = "remove";
+        }
+
+    });
+
+    $('#parent').change(function () {
+        var child = $("#child").val();
+        var parent = $("#parent").val();
+        try {
+            graph.addNode(parent, child);
+        } catch (e) {
+            if (e.name === NodeNotFoundException.name) {
+                $("#caption").html("<span class='label label-important'>Node with this name does not exists!</span>");
+            }
+        }
+        $("#caption").html("<span class='label label-info'>Node &lt;" + child + "&gt; was added to &lt;" + parent + "&gt;</span>");
+        $('#child').val("");
+        $('#operation').hide();
+        $('#prefix').hide();
+        $('#parent').hide();
+        currentCommand = "";
+    });
+
+    var currentCommand = "";
+
+    $('#child').typeahead({source:function (query) {
+        return (function () {
+            if (currentCommand === "") {
+                return  ["add &lt;node&gt; &lt;parent&gt;", "remove &lt;node&gt;", "find &lt;node&gt;"];
+            } else {
+                return selectChildNode(query);
+            }
+        }());
+    }});
+
+    $('#parent').typeahead({source:selectChildNode});
+
+    var showChildren = function (query) {
         console.log(1);
         $("#tree").html("");
         try {
-            var search = graph.search($("#insert").val());
+            var search = graph.search(query);
             console.log(search);
             if (search && !(search instanceof Array)) {
                 var childNames = search.getChildNames();
                 if (childNames.length > 0) {
                     $("#caption").html(
                             "Child of " +
-                                    "<span class='label label-success'>" + $("#insert").val() + "</span>" +
+                                    "<span class='label label-success'>" + query + "</span>" +
                                     " is :"
                     );
                     for (var k in childNames)
@@ -90,13 +159,13 @@
                     var parentNodes = search.getParentNames();
                     $("#caption").html(
                             "Parent of " +
-                                    "<span class='label label-warning'>" + $("#insert").val() + "</span>" +
+                                    "<span class='label label-warning'>" + query + "</span>" +
                                     " is : " +
                                     "<span class='label label-success'>" + parentNodes[0] + "</span>"
                     );
                 }
             } else {
-                $("#caption").html("<span class='label label-important'>Incorrect parent name!</span>");
+                $("#caption").html("<span class='label label-important'>Node name " + query + " is incorrect!</span>");
             }
         } catch (e) {
             if (e.name === NodeNotFoundException.name) {
@@ -106,7 +175,6 @@
 
 
     };
-    $("#insert").change(showChildren);
 </script>
 
 </body>

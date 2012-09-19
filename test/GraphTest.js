@@ -80,7 +80,37 @@ TestCase("GraphTest", {
         assertNotUndefined(node);
         assertArray(node);
 
-        var dict = ["water","water1","water2","water3","water4"];
+        var dict = ["water", "water1", "water2", "water3", "water4"];
+        (function () {
+            for (var i in dict) {
+                for (var j in node) {
+                    var result = false;
+                    if (dict[i] === node[j].getName()) {
+                        result = true;
+                        break;
+                    }
+                }
+                assertTrue("expected : " + dict[i] + ", but was : " + node[j].getName(), result);
+            }
+        })();
+    },
+    "testSearchWithOneResultShouldReturnArray":function () {
+        var graph = new Graph();
+        graph.addNode("milk");
+        graph.addNode("milk", "water");
+        graph.addNode("water", "water1");
+        graph.addNode("water", "water2");
+        graph.addNode("water", "water3");
+        graph.addNode("water", "water4");
+        graph.addNode("milk", "sugar9");
+        graph.addNode("milk", "coc");
+        graph.addNode("milk", "mcoc");
+
+        var node = graph.search("9");
+        assertNotUndefined(node);
+        assertArray(node);
+
+        var dict = ["sugar9"];
         (function () {
             for (var i in dict) {
                 for (var j in node) {
