@@ -32,7 +32,7 @@ Node.prototype.addChild = function (child) {
         realChild = new Node(child.toString());
     }
     realChild.parents.push(self);
-    this.childs.push(realChild);
+    self.childs.push(realChild);
 };
 
 Node.prototype.getChildNames = function () {
@@ -58,6 +58,7 @@ Node.prototype.getParentNames = function () {
 };
 
 Node.prototype.search = function (name) {
+    console.log("node search '" + name + "'");
     var result = new Array();
     for (var j in this.childs) {
         if (this.childs[j].getName() && this.childs[j].getName().match(name)) {
@@ -82,3 +83,21 @@ Node.prototype.search = function (name) {
 
     return result;
 };
+
+Node.prototype.removeNode = function () {
+    this.parents[0].removeChild(this.name);
+    this.parents = new Array();
+}
+
+Node.prototype.removeChild = function (name) {
+    var self = this;
+    (function () {
+        var child = self.childs;
+        for (var i in child) {
+            if (child[i].getName() === name) {
+                console.log(self.childs.splice(i, 1).length);
+                break;
+            }
+        }
+    })();
+}

@@ -8,8 +8,10 @@
 'use strict';
 
 function Graph() {
-    this.root = new Node("mainObjectInTheMatrixWorld");
+    this.root = new Node(Graph.prototype.rootNodeName);
 }
+
+Graph.prototype.rootNodeName = "mainObjectInTheMatrixWorld";
 
 Graph.prototype.addNode = function (parent, name) {
 
@@ -38,10 +40,30 @@ Graph.prototype.addNode = function (parent, name) {
 };
 
 Graph.prototype.search = function (name) {
+    console.log(name);
     var result = this.root.search(name);
+    console.log(result);
     if (!result || result == null || (result instanceof Array && result.length == 0)) {
         throw new NodeNotFoundException();
     } else {
         return result;
+    }
+}
+
+Graph.prototype.removeNode = function (name) {
+    var nodes = this.root.search(name);
+    if (!nodes || nodes == null || (nodes instanceof Array && nodes.length == 0)) {
+        throw new NodeNotFoundException();
+    } else {
+
+        if (nodes) {
+            if (nodes instanceof Array) {
+                throw new FindDuplicatedNodes();
+            }
+
+            nodes.removeNode();
+        }
+
+        return true;
     }
 }

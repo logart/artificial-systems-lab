@@ -31,150 +31,273 @@
 
 
 <script>
-    $(document).ready(function () {
-        $(window).keydown(function (event) {
-            if (event.keyCode == 13) {
-                event.preventDefault();
-                return false;
-            }
-            return true;
-        });
-    });
-    var graph = new Graph();
-    graph.addNode("milk");
-    graph.addNode("milk", "water");
-    graph.addNode("water", "water1");
-    graph.addNode("water", "water2");
-    graph.addNode("water", "water3");
-    graph.addNode("water", "water4");
-    graph.addNode("milk", "sugar");
-    graph.addNode("milk", "coc");
-    graph.addNode("milk", "mcoc");
-
-    var selectChildNode = function (query) {
-        var result = [];
-        (function () {
-            try {
-                var search = graph.search(query);
-            } catch (e) {
-                if (e.name === "NodeNotFoundException") {
-                    result = [];
-                    return;
-                }
-            }
-
-            for (var i in search) {
-                result.push(search[i].getName());
-            }
-        })();
-        console.log(result);
-        return result;
-    }
-
-    $('#child').change(function () {
-        var request = $('#child').val();
-        console.log(request);
-        var search = request.search("&lt;");
-        console.log(search);
-        if (currentCommand == "find") {
-            showChildren(request);
-            $("#operation").hide();
-            $("#child").val("");
-            currentCommand = "";
-            return true;
+$(document).ready(function () {
+    $(window).keydown(function (event) {
+        if (event.keyCode == 13) {
+            console.log("#" + event.target.id);
+            $("#" + event.target.id).change();
+            event.preventDefault();
+            return false;
         }
-
-        //determine operation type
-        if (request[0] == "a") {
-            $('#operation').html("add");
-            $('#operation').show();
-            $('#parent').show();
-            $('#prefix').show();
-            $('#child').val("");
-            currentCommand = "add";
-        } else if (request[0] == "f") {
-            $('#operation').html("find");
-            $('#operation').show();
-            var request = $('#child').val();
-            $('#child').val("");
-            currentCommand = "find";
-        } else if (request[0] == "r") {
-            $('#operation').html("remove");
-            $('#operation').show();
-            $('#child').val("");
-            currentCommand = "remove";
-        }
-
+        return true;
     });
+});
 
-    $('#parent').change(function () {
-        var child = $("#child").val();
-        var parent = $("#parent").val();
-        try {
-            graph.addNode(parent, child);
-        } catch (e) {
-            if (e.name === NodeNotFoundException.name) {
-                $("#caption").html("<span class='label label-important'>Node with this name does not exists!</span>");
-            }
-        }
-        $("#caption").html("<span class='label label-info'>Node &lt;" + child + "&gt; was added to &lt;" + parent + "&gt;</span>");
-        $('#child').val("");
-        $('#operation').hide();
-        $('#prefix').hide();
-        $('#parent').hide();
-        currentCommand = "";
-    });
+var graph = new Graph();
+graph.addNode("apple devices");
+graph.addNode("apple devices", "iphone");
+graph.addNode("apple devices", "ipad");
+graph.addNode("apple devices", "ipod");
+graph.addNode("apple devices", "mac");
 
-    var currentCommand = "";
+graph.addNode("iphone", "iphone classic");
+graph.addNode("iphone", "iphone 3");
+graph.addNode("iphone", "iphone 4");
+graph.addNode("iphone", "iphone 5");
 
-    $('#child').typeahead({source:function (query) {
-        return (function () {
-            if (currentCommand === "") {
-                return  ["add &lt;node&gt; &lt;parent&gt;", "remove &lt;node&gt;", "find &lt;node&gt;"];
-            } else {
-                return selectChildNode(query);
-            }
-        }());
-    }});
+graph.addNode("ipad", "ipad classic");
+graph.addNode("ipad", "ipad 2");
+graph.addNode("ipad", "ipad 3");
 
-    $('#parent').typeahead({source:selectChildNode});
+graph.addNode("ipod", "ipod classic");
+graph.addNode("ipod", "ipod hdd");
+graph.addNode("ipod", "ipod 4");
+graph.addNode("ipod", "ipod 5");
 
-    var showChildren = function (query) {
-        console.log(1);
-        $("#tree").html("");
+graph.addNode("mac", "mac book");
+graph.addNode("mac", "mac mini");
+
+graph.addNode("iphone 3", "iphone 3 classic");
+graph.addNode("iphone 3", "iphone 3 retina");
+
+graph.addNode("iphone 4", "iphone 4 classic");
+graph.addNode("iphone 4", "iphone 4 s");
+
+graph.addNode("ipad 2", "ipad 2 classic");
+graph.addNode("ipad 2", "ipad 2 retina");
+
+graph.addNode("ipod classic", "ipod classic mini");
+graph.addNode("ipod classic", "ipod classic nano");
+graph.addNode("ipod classic", "ipod classic full");
+
+graph.addNode("ipod hdd", "ipod hdd mini");
+graph.addNode("ipod hdd", "ipod hdd nano");
+graph.addNode("ipod hdd", "ipod hdd full");
+
+graph.addNode("ipod 4", "ipod 4 mini");
+graph.addNode("ipod 4", "ipod 4 nano");
+graph.addNode("ipod 4", "ipod 4 full");
+
+graph.addNode("ipod 5", "ipod 5 mini");
+graph.addNode("ipod 5", "ipod 5 nano");
+graph.addNode("ipod 5", "ipod 5 full");
+
+graph.addNode("mac book", "mac book pro");
+graph.addNode("mac book", "mac book air");
+
+graph.addNode("mac book pro", "mac book pro 13");
+graph.addNode("mac book pro", "mac book pro 15");
+graph.addNode("mac book pro", "mac book pro 17");
+
+graph.addNode("mac book air", "mac book air 13");
+graph.addNode("mac book air", "mac book air 15");
+graph.addNode("mac book air", "mac book air 17");
+
+
+graph.addNode("mac mini", "mac mini $500");
+graph.addNode("mac mini", "mac mini $700");
+
+graph.addNode("mac book pro 13", "mac book pro 13 X48UFOWJDHFN3RWEJH");
+graph.addNode("mac book pro 13", "mac book pro 13 X48UFOSDLKFJSDLKDS");
+graph.addNode("mac book pro 13", "mac book pro 13 X48UFOWSADHASKJDHA");
+graph.addNode("mac book pro 13", "mac book pro 13 X48UFOWJASRLDKSADK");
+
+graph.addNode("mac book pro 15", "mac book pro 15 X57JDOWJDHFN3RWEJH");
+graph.addNode("mac book pro 15", "mac book pro 15 X57JDOSDLKFJSDLKDS");
+graph.addNode("mac book pro 15", "mac book pro 15 X57JDOWSADHASKJDHA");
+graph.addNode("mac book pro 15", "mac book pro 15 X57JDOWJASRLDKSADK");
+
+graph.addNode("mac book pro 17", "mac book pro 17 X77SDHWJDHFN3RWEJH");
+graph.addNode("mac book pro 17", "mac book pro 17 X77SDHSDLKFJSDLKDS");
+graph.addNode("mac book pro 17", "mac book pro 17 X77SDHWSADHASKJDHA");
+graph.addNode("mac book pro 17", "mac book pro 17 X77SDHWJASRLDKSADK");
+
+graph.addNode("mac book air 13", "mac book air 13 A84SDLKFJWJDHFN3RWEJH");
+graph.addNode("mac book air 13", "mac book air 13 A84SDLKFJSDLKFJSDLKDS");
+graph.addNode("mac book air 13", "mac book air 13 A84SDLKFJWSADHASKJDHA");
+graph.addNode("mac book air 13", "mac book air 13 A84SDLKFJWJASRLDKSADK");
+
+graph.addNode("mac book air 15", "mac book air 15 A56SDLKFJ57DHFN3RWEJH");
+graph.addNode("mac book air 15", "mac book air 15 A56SDLKFJSDLKFJSDLKDS");
+graph.addNode("mac book air 15", "mac book air 15 A56SDLKFJWSADHASKJDHA");
+graph.addNode("mac book air 15", "mac book air 15 A56SDLKFJWJASRLDKSADK");
+
+var selectChildNode = function (query) {
+    var result = [];
+    (function () {
         try {
             var search = graph.search(query);
-            console.log(search);
-            if (search && !(search instanceof Array)) {
-                var childNames = search.getChildNames();
-                if (childNames.length > 0) {
-                    $("#caption").html(
-                            "Child of " +
-                                    "<span class='label label-success'>" + query + "</span>" +
-                                    " is :"
-                    );
-                    for (var k in childNames)
-                        $("#tree").append("<li> <span class='label label-warning'>" + childNames[k] + "</span></li>");
-                } else {
-                    var parentNodes = search.getParentNames();
-                    $("#caption").html(
-                            "Parent of " +
-                                    "<span class='label label-warning'>" + query + "</span>" +
-                                    " is : " +
-                                    "<span class='label label-success'>" + parentNodes[0] + "</span>"
-                    );
-                }
-            } else {
-                $("#caption").html("<span class='label label-important'>Node name " + query + " is incorrect!</span>");
-            }
         } catch (e) {
-            if (e.name === NodeNotFoundException.name) {
-                $("#caption").html("<span class='label label-important'>Node with this name does not exists!</span>");
+            if (e.name === "NodeNotFoundException") {
+                result = [];
+                return;
             }
         }
 
+        for (var i in search) {
+            result.push(search[i].getName());
+        }
+    })();
+    console.log(result);
+    return result;
+}
 
-    };
+$('#child').change(function () {
+    var request = $('#child').val();
+    console.log(request);
+    var search = request.search("&lt;");
+    console.log(search);
+    if (currentCommand == "find") {
+        showChildren(request);
+        $("#operation").hide();
+        $("#child").val("");
+        currentCommand = "";
+        return true;
+    }
+
+    if (currentCommand == "remove") {
+        removeNode(request);
+        $('#child').val("");
+        $('#caption').val("");
+        $('#tree').html("");
+        currentCommand = "";
+        return true;
+    }
+
+    //determine operation type
+    if (request[0] == "a") {
+        $('#operation').html("add");
+        $('#operation').show();
+        $('#parent').show();
+        $('#prefix').show();
+        $('#child').val("");
+        currentCommand = "add";
+    } else if (request[0] == "f") {
+        $('#operation').html("find");
+        $('#operation').show();
+        var request = $('#child').val();
+        $('#child').val("");
+        currentCommand = "find";
+    } else if (request[0] == "r") {
+        $('#operation').html("remove");
+        $('#operation').show();
+        $('#child').val("");
+        currentCommand = "remove";
+    }
+
+});
+
+$('#parent').change(function () {
+    var child = $("#child").val();
+    var parent = $("#parent").val();
+    console.log(parent);
+    try {
+        if (parent === "") {
+            graph.addNode(child);
+        } else {
+            graph.addNode(parent, child);
+        }
+    } catch (e) {
+        if (e.name === NodeNotFoundException.name) {
+            $("#caption").html("<span class='label label-important'>Node with this name does not exists!</span>");
+        }
+    }
+
+    if (parent === "") {
+        $("#caption").html("<span class='label label-info'>Node &lt;" + child + "&gt; was added as \"root\" node</span>");
+    } else {
+        $("#caption").html("<span class='label label-info'>Node &lt;" + child + "&gt; was added to &lt;" + parent + "&gt;</span>");
+    }
+
+    $('#child').val("");
+    $('#tree').html("");
+    $('#parent').val("");
+    $('#operation').hide();
+    $('#prefix').hide();
+    $('#parent').hide();
+    currentCommand = "";
+});
+
+var currentCommand = "";
+
+$('#child').typeahead({source:function (query) {
+    return (function () {
+        if (currentCommand === "") {
+            return  ["add &lt;node&gt; &lt;parent&gt;", "remove &lt;node&gt;", "find &lt;node&gt;"];
+        } else {
+            return selectChildNode(query);
+        }
+    }());
+}});
+
+$('#parent').typeahead({source:selectChildNode});
+
+var showChildren = function (query) {
+    console.log(1);
+    $("#tree").html("");
+//    try {
+    var search = graph.search(query);
+    console.log(search);
+    if (search && !(search instanceof Array)) {
+        var childNames = search.getChildNames();
+        if (childNames.length > 0) {
+            $("#caption").html(
+                    "Child of " +
+                            "<span class='label label-success'>" + query + "</span>" +
+                            " is :"
+            );
+            for (var k in childNames)
+                $("#tree").append("<li> <span class='label label-warning'>" + childNames[k] + "</span></li>");
+        } else {
+            var parentNodes = search.getParentNames();
+            if (parentNodes[0] === Graph.prototype.rootNodeName) {
+                $("#caption").html(
+                        "<span class='label label-warning'>" + query + "</span>" +
+                                " is root node"
+                );
+            } else {
+                $("#caption").html(
+                        "Parent of " +
+                                "<span class='label label-warning'>" + query + "</span>" +
+                                " is : " +
+                                "<span class='label label-success'>" + parentNodes[0] + "</span>"
+                );
+            }
+        }
+    } else {
+        $("#caption").html("<span class='label label-important'>Node name " + query + " is incorrect!</span>");
+    }
+    /*} catch (e) {
+     if (e.name === NodeNotFoundException.name) {
+     $("#caption").html("<span class='label label-important'>Node with this name does not exists!</span>");
+     }
+     throw e;
+     }*/
+
+
+};
+
+var removeNode = function (nodeName) {
+    try {
+        graph.removeNode(nodeName);
+        $("#caption").html("<span class='label label-info'>Node with name " + nodeName + " succesfully delted!</span>");
+    } catch (e) {
+        if (e.name === NodeNotFoundException.name) {
+            $("#caption").html("<span class='label label-important'>Node with this name does not exists!</span>");
+        }
+    }
+}
+
 </script>
 
 </body>
