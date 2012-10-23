@@ -7,6 +7,23 @@
  */
 'use strict';
 
+function escapeSymbols(stringToConvert) {
+    var str = stringToConvert.replace("\\", "\\\\").
+        replace("(", "\\(").
+        replace(")", "\\)").
+        replace("[", "\\[").
+        replace("]", "\\]").
+        replace("{", "\\{").
+        replace("}", "\\}").
+        replace("?", "\\?").
+        replace(".", "\\.").
+        replace("$", "\\$").
+        replace("+", "\\+").
+        replace("*", "\\*").
+        replace("^", "\\^");
+    return str;
+}
+
 function Node(name) {
     this.name = name;
     this.childs = [];
@@ -61,7 +78,7 @@ Node.prototype.search = function (name) {
     console.log("node search '" + name + "'");
     var result = new Array();
     for (var j in this.childs) {
-        if (this.childs[j].getName() && this.childs[j].getName().match(name)) {
+        if (this.childs[j].getName() && this.childs[j].getName().match(escapeSymbols(name))) {
             result.push(this.childs[j]);
             if (this.childs[j].getName() === name) {
                 return this.childs[j];

@@ -198,13 +198,15 @@ $('#child').change(function () {
 });
 
 $('#parent').change(function () {
-    var child = $("#child").val();
-    var parent = $("#parent").val();
+    var parent= $("#child").val();
+    var child  = $("#parent").val();
     console.log(parent);
     try {
         if (parent === "") {
             graph.addNode(child);
         } else {
+            console.log(">>>>"+parent);
+
             graph.addNode(parent, child);
         }
     } catch (e) {

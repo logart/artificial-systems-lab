@@ -33,11 +33,13 @@ TestCase("StringMatchTest", {
             return str;
         }
 
-        String.prototype.match = function (regExp, secondTime) {
+        String.prototype.match = (function () {
             var _match = String.prototype.match;
-            var escaped = escapeSymbols(regExp);
-            return _match(escaped);
-        }
+            return function (regExp){
+                var escaped = escapeSymbols(regExp);
+                _match.call(this, escaped);
+            }
+        })();
 
         assertNotNull("a (str)".match("a"));
         assertNotNull("a (str)".match("a "));
@@ -46,7 +48,7 @@ TestCase("StringMatchTest", {
         assertNotNull("a (str)".match("a (st"));
         assertNotNull("a (str)".match("a (str"));
         assertNotNull("a (str)".match("a (str)"));
-        assertNotNull("a (str)".match("a (str)"));
+        assertNotNull("a (str)".match("a (str) "));
     }
 
 });
